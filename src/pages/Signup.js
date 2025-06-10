@@ -8,29 +8,35 @@ export default function SignUp() {
     role: 'driver',
     password: ''
   });
+
   const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {  
     e.preventDefault();
     setMessage('');
     try {
+
+      // calling backend api for registration
+      // using fetch to send a POST request to the server
       const res = await fetch('http://localhost:8080/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
+      
       const data = await res.json();
+
       if (res.ok) {
         setMessage(data.message || 'Registration successful!');
         setForm({ name: '', email: '', phone: '', role: 'driver', password: '' });
       } else {
         setMessage(data.message || 'Registration failed');
       }
-    } catch (err) {
+    }catch (err) {
       setMessage('Error connecting to server');
     }
   };
@@ -38,7 +44,11 @@ export default function SignUp() {
   return (
     <div className="container mt-5" style={{maxWidth: 500}}>
       <h2>Sign Up</h2>
+
+     
       {message && <div className="alert alert-info">{message}</div>}
+
+
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label>Name</label>

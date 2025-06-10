@@ -1,28 +1,26 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import SignUp from "../src/pages/Signup";
 import Login from "../src/pages/Login";
-import './App.css';;
-
+import './App.css';
+import Welcome from './pages/Welcome';
+import ProtectedRoute from './security/ProtectedRoute';
+import Logout from './pages/Logout';
+import Nav from './components/Nav';
+import Home from './pages/Home';
 function App() {
   return (
     <Router>
-      <div className="App">
-        <nav className="navbar navbar-expand navbar-light bg-light">
-          <div className="container">
-            <Link className="navbar-brand" to="/">Cab Service</Link>
-            <div>
-              <Link className="nav-link" to="/signup">Sign Up</Link>
-              <Link className="nav-link" to="/login">Login</Link>
-            </div>
-          </div>
-        </nav>
+
+        <Nav />
         <Routes>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<div className="mt-5"><h2>Welcome to Cab Service</h2></div>} />
+          <Route path="/welcome" element={<ProtectedRoute><Welcome/></ProtectedRoute>} />
+          <Route path="/" element={<Home/>} />
+          <Route path="/logout" element={<Logout />} />
         </Routes>
-      </div>
+
     </Router>
   );
 }
