@@ -26,9 +26,15 @@ export default function Login() {
         localStorage.setItem('token', data.token);
 
         setTimeout(() => {
-          navigate('/welcome');
-        }, 1000); // Redirect after 1 second
-
+        if (data.user && data.user.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else if (data.user && data.user.role === 'driver') {
+          navigate('/driver-dashboard');
+        } else {
+          navigate('/user-dashboard');
+        }
+      }, 1000); // Redirect after 1 second
+      
       } else {
         setMessage(data.message || 'Login failed');
       }

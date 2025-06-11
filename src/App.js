@@ -1,26 +1,30 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SignUp from "../src/pages/Signup";
-import Login from "../src/pages/Login";
+import SignUp from './pages/Signup';
+import Login from './pages/Login';
 import './App.css';
 import Welcome from './pages/Welcome';
 import ProtectedRoute from './security/ProtectedRoute';
 import Logout from './pages/Logout';
 import Nav from './components/Nav';
 import Home from './pages/Home';
+import AdminDashboard from './pages/dashboard/AdminDashboard';
+import UserDashboard from './pages/dashboard/UserDashboard';
+import DriverDashboard from './pages/dashboard/DriverDashboard';
 function App() {
   return (
     <Router>
-
-        <Nav />
-        <Routes>
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/welcome" element={<ProtectedRoute><Welcome/></ProtectedRoute>} />
-          <Route path="/" element={<Home/>} />
-          <Route path="/logout" element={<Logout />} />
-        </Routes>
-
+      <Nav />
+      <Routes>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
+        <Route path="/" element={<Home />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/user-dashboard" element={<UserDashboard />} />
+        <Route path="/driver-dashboard" element={<DriverDashboard />} />
+      </Routes>
     </Router>
   );
 }

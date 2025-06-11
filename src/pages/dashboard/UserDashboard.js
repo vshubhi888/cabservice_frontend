@@ -1,0 +1,48 @@
+import React from 'react';
+
+export default function UserDashboard() {
+  return (
+    <div className="container mt-5">
+      <div className="card shadow">
+        <div className="card-header bg-info text-white">
+          <h2 className="mb-0">User Dashboard</h2>
+        </div>
+        <div className="card-body">
+          <div className="row text-center mb-4">
+            <div className="col-md-4 mb-3">
+              <div className="card border-primary">
+                <div className="card-body">
+                  <h5 className="card-title">Upcoming Bookings</h5>
+                  <p className="card-text display-6">3</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4 mb-3">
+              <div className="card border-success">
+                <div className="card-body">
+                  <h5 className="card-title">Completed Rides</h5>
+                  <p className="card-text display-6">12</p>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-4 mb-3">
+              <div className="card border-warning">
+                <div className="card-body">
+                  <h5 className="card-title">Total Spent</h5>
+                  <p className="card-text display-6">$250</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <h4 className="mb-3">Quick Actions</h4>
+          <div className="d-flex flex-wrap gap-3">
+            <button className="btn btn-outline-primary">Book a Cab</button>
+            <button className="btn btn-outline-success">View Bookings</button>
+            <button className="btn btn-outline-info">Profile</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

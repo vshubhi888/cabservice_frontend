@@ -67,7 +67,6 @@ export default function SignUp() {
           <select className="form-select" name="role" value={form.role} onChange={handleChange} required>
             <option value="driver">Driver</option>
             <option value="employee">Employee</option>
-            <option value="admin">Admin</option>
           </select>
         </div>
         <div className="mb-3">
