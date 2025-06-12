@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard(){
   return (
@@ -49,6 +50,9 @@ export default function AdminDashboard(){
             <button className="btn btn-outline-success">Manage Drivers</button>
             <button className="btn btn-outline-warning">View Bookings</button>
             <button className="btn btn-outline-danger">Manage Cabs</button>
+            <Link to="/cab" className="btn btn-primary">
+              Register New Cab
+            </Link>
           </div>
         </div>
       </div>

@@ -11,22 +11,27 @@ import Home from './pages/Home';
 import AdminDashboard from './pages/dashboard/AdminDashboard';
 import UserDashboard from './pages/dashboard/UserDashboard';
 import DriverDashboard from './pages/dashboard/DriverDashboard';
+import AdminRoute from './security/ProtectedRoute';
+import Cab from './pages/cab_register';
 function App() {
   return (
     <Router>
       <Nav />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
-        <Route path="/" element={<Home />} />
         <Route path="/logout" element={<Logout />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/driver-dashboard" element={<DriverDashboard />} />
+        <Route path="/cab" element={<Cab />} />
+
       </Routes>
     </Router>
   );
 }
+
 
 export default App;
