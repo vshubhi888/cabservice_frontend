@@ -13,6 +13,8 @@ import UserDashboard from './pages/dashboard/UserDashboard';
 import DriverDashboard from './pages/dashboard/DriverDashboard';
 import AdminRoute from './security/ProtectedRoute';
 import Cab from './pages/cab_register';
+import { DashboardProvider } from './context/DashboardContext';
+
 function App() {
   return (
     <Router>
@@ -23,7 +25,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
         <Route path="/logout" element={<Logout />} />
-        <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin-dashboard" element={<AdminRoute><DashboardProvider><AdminDashboard /></DashboardProvider></AdminRoute>} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/driver-dashboard" element={<DriverDashboard />} />
         <Route path="/cab" element={<Cab />} />
