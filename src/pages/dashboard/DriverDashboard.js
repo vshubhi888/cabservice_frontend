@@ -1,111 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
-
-const SOCKET_URL = 'http://localhost:8080';
+import { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 
 export default function DriverDashboard() {
-  const [driverId, setDriverId] = useState(localStorage.getItem('driverId') || '');
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [newBooking, setNewBooking] = useState(null);
+  const [driver, setDriver] = useState(null);
   const [socket, setSocket] = useState(null);
+  const [newBooking, setNewBooking] = useState(null);
 
   useEffect(() => {
-    if (!driverId) return;
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:8080/api/users/profile', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setDriver(data.user || null));
+  }, []);
 
-    const newSocket = io(SOCKET_URL, {
-      transports: ['websocket', 'polling'],
-      path: '/socket.io',
-    });
+  useEffect(() => {
+    if (driver && driver._id) {
+      const newSocket = io('http://localhost:8080');
+      setSocket(newSocket);
+      newSocket.emit('driverLogin', driver._id);
 
-    newSocket.on('connect', () => {
-      newSocket.emit('driverLogin', driverId);
-    });
-
-    newSocket.on('newBooking', (booking) => {
-      setNewBooking(booking);
-    });
-
-    setSocket(newSocket);
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, [driverId]);
-
-  const handleAcceptBooking = async () => {
-    if (!newBooking) return;
-    try {
-      await fetch(`http://localhost:8080/api/bookings/${newBooking._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'accepted' }),
+      // Optional: Listen for driverList updates
+      newSocket.on('driverList', (list) => {
+        console.log('Online drivers:', list);
       });
-      setNewBooking(null);
-      alert('Booking accepted!');
-    } catch (err) {
-      alert('Failed to accept booking.');
+
+      // Example: Listen for newBooking event
+      newSocket.on('newBooking', (booking) => {
+        alert(`New booking received: ${booking._id}`);
+        setNewBooking(booking);
+      });
+
+      return () => newSocket.disconnect();
     }
-  };
+  }, [driver]);
 
-  const handleLogin = async () => {
-    try {
-      const res = await fetch('http://localhost:8080/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await res.json();
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        setToken(data.token);
-
-        // Fetch driver profile to get driverId
-        const profileRes = await fetch('http://localhost:8080/api/users/profile', {
-          headers: { Authorization: `Bearer ${data.token}` },
+ const handleAcceptBooking = async () => {
+    if (newBooking && driver) {
+      try {
+        const token = localStorage.getItem('token');
+        await fetch(`http://localhost:8080/api/bookings/update`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            bookingId: newBooking._id,
+            status: "accepted"
+          })
         });
-        const profile = await profileRes.json();
-        if (profile.userId) {
-          localStorage.setItem('driverId', profile.userId);
-          setDriverId(profile.userId);
-        } else {
-          alert('Failed to fetch driver profile.');
-        }
-      } else {
-        alert('Login failed');
+        setNewBooking(null);
+      } catch (error) {
+        console.error('Failed to accept booking:', error);
       }
-    } catch (err) {
-      alert('Login error');
     }
   };
-
-  if (!driverId) {
-    return (
-      <div className="container mt-5">
-        <div className="card shadow p-4">
-          <h2>Driver Login</h2>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className="form-control mb-2"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            className="form-control mb-3"
-          />
-          <button className="btn btn-success" onClick={handleLogin}>
-            Login
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mt-5">

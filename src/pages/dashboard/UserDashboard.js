@@ -1,5 +1,62 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
 export default function UserDashboard() {
+  const [user, setUser] = useState(null);
+  const [bookingStatus, setBookingStatus] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:8080/api/users/profile', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setUser(data.user || null));
+  }, []);
+
+  const handleBookCab = async () => {
+    if (!user) return;
+    setBookingStatus(null);
+    const token = localStorage.getItem('token');
+    const bookingData = {
+      employee: user._id,
+      driver: "684f092b8151f4cdf10fe80b", // Replace with actual driver id if needed
+      pickupLocation: {
+        address: "123 Main Street, City Center",
+        lat: 28.6139,
+        lng: 77.2090
+      },
+      dropLocation: {
+        address: "456 Park Avenue, Uptown",
+        lat: 28.7041,
+        lng: 77.1025
+      },
+      status: "pending",
+      bookingTime: new Date().toISOString(),
+      tripStartTime: null,
+      tripEndTime: null,
+      estimatedFare: 350
+    };
+
+    try {
+      const res = await fetch('http://localhost:8080/api/bookings/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(bookingData)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setBookingStatus('Booking registered successfully!');
+      } else {
+        setBookingStatus(data.message || 'Booking failed.');
+      }
+    } catch (err) {
+      setBookingStatus('Booking failed.');
+    }
+  };
+
   return (
     <div className="container mt-5">
       <div className="card shadow">
@@ -37,12 +94,17 @@ export default function UserDashboard() {
           <hr />
           <h4 className="mb-3">Quick Actions</h4>
           <div className="d-flex flex-wrap gap-3">
-            <button className="btn btn-outline-primary">Book a Cab</button>
+            <button className="btn btn-outline-primary" onClick={handleBookCab}>Book a Cab</button>
             <button className="btn btn-outline-success">View Bookings</button>
             <button className="btn btn-outline-info">Profile</button>
           </div>
+          {bookingStatus && (
+            <div className="alert mt-3" style={{ color: bookingStatus.includes('success') ? 'green' : 'red' }}>
+              {bookingStatus}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-}
+};
